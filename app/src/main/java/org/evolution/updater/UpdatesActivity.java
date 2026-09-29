@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -45,6 +46,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,8 +80,13 @@ import org.evolution.updater.misc.Utils;
 import org.evolution.updater.model.Update;
 import org.evolution.updater.model.UpdateInfo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -112,6 +119,7 @@ public class UpdatesActivity extends UpdatesListActivity implements UpdateImport
 
     private UpdateImporter mUpdateImporter;
     private AlertDialog importDialog;
+    private AlertDialog mChangelogLoadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,15 +283,137 @@ public class UpdatesActivity extends UpdatesListActivity implements UpdateImport
             showPreferencesDialog();
             return true;
         } else if (itemId == R.id.menu_show_changelog) {
-            Intent openUrl = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(Utils.getChangelogURL(this)));
-            startActivity(openUrl);
+            // Hien thi changelog trong app, khong mo trinh duyet
+            showChangelogInApp();
             return true;
         } else if (itemId == R.id.menu_local_update) {
             mUpdateImporter.openImportPicker();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // Tai changelog (GitHub raw) va hien thi dialog scroll trong app
+    private void showChangelogInApp() {
+        if (mChangelogLoadingDialog != null && mChangelogLoadingDialog.isShowing()) {
+            return;
+        }
+
+        final String url = Utils.getChangelogURL(this);
+        Log.d(TAG, "Fetching changelog " + url);
+
+        View loadingView = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null);
+        TextView loadingText = loadingView.findViewById(android.R.id.message);
+        // progress_dialog dung TextView khong id message — tim TextView con
+        if (loadingText == null && loadingView instanceof android.view.ViewGroup) {
+            android.view.ViewGroup group = (android.view.ViewGroup) loadingView;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child instanceof TextView) {
+                    loadingText = (TextView) child;
+                    break;
+                }
+            }
+        }
+        if (loadingText != null) {
+            loadingText.setText(R.string.changelog_loading);
+        }
+
+        mChangelogLoadingDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.menu_show_changelog)
+                .setView(loadingView)
+                .setCancelable(true)
+                .create();
+        mChangelogLoadingDialog.show();
+
+        new Thread(() -> {
+            String text = null;
+            try {
+                text = fetchTextFollowRedirects(url);
+            } catch (IOException e) {
+                Log.e(TAG, "Could not fetch changelog", e);
+            }
+            final String changelog = text;
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                if (mChangelogLoadingDialog != null && mChangelogLoadingDialog.isShowing()) {
+                    mChangelogLoadingDialog.dismiss();
+                }
+                mChangelogLoadingDialog = null;
+                if (changelog == null || changelog.isEmpty()) {
+                    showSnackbar(R.string.snack_updates_check_failed, Snackbar.LENGTH_LONG);
+                    return;
+                }
+                showChangelogDialog(changelog);
+            });
+        }, "ChangelogFetch").start();
+    }
+
+    private static String fetchTextFollowRedirects(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        HttpURLConnection conn = null;
+        // SF tra 302 — follow thu cong de an toan cross-host
+        for (int hop = 0; hop < 10; hop++) {
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(false);
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
+            conn.setRequestProperty("User-Agent", "EvoXUpdater/1.0");
+            int code = conn.getResponseCode();
+            if (code >= 300 && code < 400) {
+                String location = conn.getHeaderField("Location");
+                conn.disconnect();
+                if (location == null || location.isEmpty()) {
+                    throw new IOException("Redirect without Location: " + code);
+                }
+                url = new URL(url, location);
+                continue;
+            }
+            if (code / 100 != 2) {
+                conn.disconnect();
+                throw new IOException("HTTP " + code);
+            }
+            try (InputStream in = conn.getInputStream();
+                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                byte[] buf = new byte[8192];
+                int n;
+                int total = 0;
+                final int maxBytes = 512 * 1024;
+                while ((n = in.read(buf)) > 0) {
+                    total += n;
+                    if (total > maxBytes) {
+                        throw new IOException("Changelog too large");
+                    }
+                    out.write(buf, 0, n);
+                }
+                return out.toString(StandardCharsets.UTF_8.name());
+            } finally {
+                conn.disconnect();
+            }
+        }
+        throw new IOException("Too many redirects");
+    }
+
+    private void showChangelogDialog(String text) {
+        int paddingPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 16f, getResources().getDisplayMetrics());
+        TextView textView = new TextView(this);
+        textView.setText(text);
+        textView.setTextIsSelectable(true);
+        textView.setTypeface(Typeface.MONOSPACE);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f);
+        textView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.addView(textView);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.menu_show_changelog)
+                .setView(scrollView)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     @Override

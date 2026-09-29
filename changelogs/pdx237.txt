@@ -1,0 +1,7 @@
+Evolution X 12.2 (Android 17) — Unofficial pdx237 (Sony Xperia 5 V)
+
+Maintainer: danhancach
+Full ROM / images:
+https://sourceforge.net/projects/danhancach/files/pdx237/evoX/
+
+Personal / Unofficial builds. Not affiliated with official Evolution X releases.

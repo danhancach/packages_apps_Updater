@@ -1,52 +1,47 @@
-Updater
-=======
+# Updater
+
 Simple application to download and apply OTA packages.
 
+## Server (pdx237 / danhancach)
 
-Server requirements
--------------------
-The app sends `GET` requests to the URL defined by the `updater_server_url`
-resource (or the `lineage.updater.uri` system property) and expects as response
-a JSON with the following structure:
+The app `GET`s `updater_server_url` (placeholder `{device}` ← `ro.evolution.device`)
+and expects Evolution X JSON:
+
 ```json
 {
   "response": [
     {
-      "datetime": 1230764400,
-      "filename": "ota-package.zip",
-      "id": "5eb63bbbe01eeed093cb22bb8f5acdc3",
-      "romtype": "nightly",
-      "size": 314572800,
-      "url": "https://example.com/ota-package.zip",
-      "version": "15.1"
+      "maintainer": "danhancach",
+      "forum": "https://github.com/danhancach",
+      "firmware": "https://example.com/firmware",
+      "paypal": "https://github.com/danhancach",
+      "filename": "EvolutionX-….zip",
+      "download": "https://sourceforge.net/projects/danhancach/files/pdx237/evoX/<zip>/download",
+      "timestamp": 1234567890,
+      "md5": "…",
+      "size": 123456789,
+      "version": "12.2"
     }
   ]
 }
 ```
 
-The `datetime` attribute is the build date expressed as UNIX timestamp.  
-The `filename` attribute is the name of the file to be downloaded.  
-The `id` attribute is a string that uniquely identifies the update.  
-The `romtype` attribute is the string to be compared with the `ro.lineage.releasetype` property.  
-The `size` attribute is the size of the update expressed in bytes.  
-The `url` attribute is the URL of the file to be downloaded.  
-The `version` attribute is the string to be compared with the `ro.lineage.build.version` property.  
+This fork:
 
-Additional attributes are ignored.
+| Resource | Host | URL |
+|----------|------|-----|
+| builds JSON | SourceForge | `…/pdx237/ota/builds/{device}.json/download` |
+| changelog | GitHub raw | `https://raw.githubusercontent.com/danhancach/packages_apps_Updater/cnb/changelogs/%1$s.txt` |
+| ROM zip | SourceForge | `…/pdx237/evoX/<file>/download` |
 
+Changelog text lives in-repo under `changelogs/` (synced from local `evolution/OTA/changelogs/`). JSON / ROM zip stay on SourceForge (skill `sourceforge-rom-upload`).
 
-Build with Android Studio
--------------------------
-Updater needs access to the system API, therefore it can't be built only using
-the public SDK. You first need to generate the libraries with all the needed
-classes. The application also needs elevated privileges, so you need to sign
-it with the right key to update the one in the system partition. To do this:
+Extra JSON fields are ignored by the parser; `md5` is the download id (package verify uses RecoverySystem).
 
- - Place this directory anywhere in the Android source tree
- - Generate a keystore and keystore.properties using `gen-keystore.sh`
- - Build the dependencies running `make UpdaterStudio` from the root of the
-   Android source tree. This command will add the needed libraries in
-   `system_libraries/`.
+## Build with Android Studio
 
-You need to do the above once, unless Android Studio can't find some symbol.
-In this case, rebuild the system libraries with `make UpdaterStudio`.
+Updater needs system APIs and a platform signature. From the Android tree:
+
+- Generate keystore via `gen-keystore.sh`
+- `make UpdaterStudio` once for `system_libraries/`
+- Sign with the platform key used on device
