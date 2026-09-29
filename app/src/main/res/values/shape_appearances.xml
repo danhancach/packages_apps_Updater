@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SettingsLib expressive: preference corner 20dp (large2), mep noi 4dp (extrasmall2) -->
+<resources>
+    <style name="ShapeAppearance.Updater.Preference.Single" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/updater_preference_corner_radius</item>
+    </style>
+
+    <style name="ShapeAppearance.Updater.Preference.Top" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/updater_preference_corner_radius</item>
+        <item name="cornerSizeTopRight">@dimen/updater_preference_corner_radius</item>
+        <item name="cornerSizeBottomLeft">@dimen/updater_preference_corner_inner</item>
+        <item name="cornerSizeBottomRight">@dimen/updater_preference_corner_inner</item>
+    </style>
+
+    <style name="ShapeAppearance.Updater.Preference.Center" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/updater_preference_corner_inner</item>
+    </style>
+
+    <style name="ShapeAppearance.Updater.Preference.Bottom" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/updater_preference_corner_inner</item>
+        <item name="cornerSizeTopRight">@dimen/updater_preference_corner_inner</item>
+        <item name="cornerSizeBottomLeft">@dimen/updater_preference_corner_radius</item>
+        <item name="cornerSizeBottomRight">@dimen/updater_preference_corner_radius</item>
+    </style>
+</resources>

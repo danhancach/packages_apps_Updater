@@ -11,7 +11,8 @@ android_app {
     defaults: ["SettingsLibDefaults"],
 
     srcs: ["src/main/java/**/*.java"],
-    resource_dirs: ["src/main/res"],
+    // res-soong: symbols.xml (java-symbol) — Gradle khong merge duoc
+    resource_dirs: ["src/main/res", "src/main/res-soong"],
     manifest: "src/main/AndroidManifest.xml",
 
     platform_apis: true,
@@ -33,6 +34,8 @@ android_app {
         "androidx.localbroadcastmanager_localbroadcastmanager",
         "androidx.preference_preference",
         "androidx.recyclerview_recyclerview",
+        "androidx.swiperefreshlayout_swiperefreshlayout",
+        "androidx.viewpager2_viewpager2",
         "com.google.android.material_material",
     ],
 

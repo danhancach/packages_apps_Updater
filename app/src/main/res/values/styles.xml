@@ -1,31 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
-        <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="colorAccent">@color/theme_accent</item>
+    <!--
+      Parent Theme.Material3.DayNight (chuoi AppCompat).
+      Monet: applyStyle ThemeOverlay.Material3.DynamicColors.DayNight trong
+      UpdatesActivity (kieu ReSukiSU / system_accent) — KHONG doi parent sang
+      Theme.Material3.DynamicColors.*.NoActionBar, KHONG
+      DynamicColors.applyToActivitiesIfAvailable (crash Soong).
+    -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight">
+        <!-- Font mac dinh he thong (khong dung typeface Material rieng) -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:windowLightStatusBar">@bool/theme_is_light</item>
-        <item name="android:windowLightNavigationBar">@bool/theme_is_light</item>
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">?attr/colorSurfaceContainer</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightNavigationBar">?attr/isLightTheme</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.Material3.PopupMenu.Overflow</item>
+        <item name="bottomSheetDialogTheme">@style/AppTheme.BottomSheetDialog</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.Material3.DayNight">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">?attr/colorSurfaceContainer</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightNavigationBar">?attr/isLightTheme</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.Material3.PopupMenu.Overflow</item>
+        <item name="bottomSheetDialogTheme">@style/AppTheme.BottomSheetDialog</item>
     </style>
 
-    <style name="AppTheme.PopupMenuOverlapAnchor">
+    <!-- Override UI app: popup hanh dong giong AlertDialog / Spinner (28dp +
+         SurfaceContainerHigh), khong bam Menu.md 4dp. Offset chevron ~8dp doc. -->
+    <style name="AppTheme.PopupMenuOverlapAnchor" parent="ThemeOverlay.Material3">
         <item name="android:overlapAnchor">true</item>
         <item name="android:dropDownVerticalOffset">8dp</item>
-        <item name="android:dropDownHorizontalOffset">-16dp</item>
+        <item name="android:dropDownHorizontalOffset">0dp</item>
+        <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu</item>
+        <item name="popupMenuBackground">@drawable/updater_popup_menu_bg</item>
+        <item name="android:popupElevation">3dp</item>
+        <item name="textAppearanceLargePopupMenu">?attr/textAppearanceBodyLarge</item>
+        <item name="textAppearanceSmallPopupMenu">?attr/textAppearanceBodyLarge</item>
     </style>
 
-    <style name="AppTheme.AlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="dialogCornerRadius">16dp</item>
+    <style name="AppTheme.AlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:colorBackground">?attr/colorSurfaceContainerHigh</item>
+        <item name="dialogCornerRadius">28dp</item>
+    </style>
+
+    <style name="AppTheme.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheet</item>
+    </style>
+
+    <style name="AppTheme.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">?attr/colorSurfaceContainerLow</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.ExtraLarge</item>
+    </style>
+
+    <!-- The don toan app: SettingsLib preference corner 20dp (khong dung 28dp) -->
+    <style name="Widget.Updater.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceBright</item>
+        <item name="cardCornerRadius">@dimen/updater_preference_corner_radius</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Updater.Preference.Single</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Preference group Expressive: Top / Center / Bottom / Single -->
+    <style name="Widget.Updater.PreferenceCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceBright</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Updater.Preference.Single</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Widget.Updater.PreferenceCard.Top" parent="Widget.Updater.PreferenceCard">
+        <item name="shapeAppearance">@style/ShapeAppearance.Updater.Preference.Top</item>
+    </style>
+
+    <style name="Widget.Updater.PreferenceCard.Center" parent="Widget.Updater.PreferenceCard">
+        <item name="shapeAppearance">@style/ShapeAppearance.Updater.Preference.Center</item>
+    </style>
+
+    <style name="Widget.Updater.PreferenceCard.Bottom" parent="Widget.Updater.PreferenceCard">
+        <item name="shapeAppearance">@style/ShapeAppearance.Updater.Preference.Bottom</item>
+    </style>
+
+    <!-- Bottom nav gon: icon/label nho, padding giam, van ~48dp touch -->
+    <style name="Widget.Updater.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:minHeight">@dimen/updater_bottom_nav_min_height</item>
+        <item name="itemIconSize">@dimen/updater_bottom_nav_icon_size</item>
+        <item name="itemPaddingTop">@dimen/updater_bottom_nav_item_padding_top</item>
+        <item name="itemPaddingBottom">@dimen/updater_bottom_nav_item_padding_bottom</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.Updater.BottomNav</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.Updater.BottomNav</item>
+    </style>
+
+    <style name="TextAppearance.Updater.BottomNav" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
+    <!-- ReSukiSU size; font = sans-serif he thong -->
+    <style name="TextAppearance.Updater.CollapsingToolbar.Expanded" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.Updater.CollapsingToolbar.Collapsed" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 </resources>

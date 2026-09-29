@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_export_update"
-        android:title="@string/menu_export_update" />
-    <item
-        android:id="@+id/menu_delete_action"
-        android:title="@string/menu_delete_update" />
-    <item
-        android:id="@+id/menu_copy_url"
-        android:title="@string/menu_copy_url" />
+    <!-- Mot group duy nhat: primary + export + delete + copy — spacing deu, khong divider -->
+    <group android:id="@+id/menu_group_actions">
+        <item
+            android:id="@+id/menu_primary_action"
+            android:icon="@drawable/ic_menu_download"
+            android:title="@string/action_download" />
+        <item
+            android:id="@+id/menu_export_update"
+            android:icon="@drawable/ic_menu_export"
+            android:title="@string/menu_export_update" />
+        <item
+            android:id="@+id/menu_delete_action"
+            android:icon="@drawable/ic_menu_delete"
+            android:title="@string/menu_delete_update" />
+        <item
+            android:id="@+id/menu_copy_url"
+            android:icon="@drawable/ic_menu_copy_url"
+            android:title="@string/menu_copy_url" />
+    </group>
 </menu>

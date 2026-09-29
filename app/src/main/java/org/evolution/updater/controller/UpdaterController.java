@@ -332,9 +332,25 @@ public class UpdaterController {
 
     public boolean addUpdate(final UpdateInfo updateInfo, boolean availableOnline) {
         Log.d(TAG, "Adding download: " + updateInfo.getDownloadId());
-        if (mDownloads.containsKey(updateInfo.getDownloadId())) {
-            Log.d(TAG, "Download (" + updateInfo.getDownloadId() + ") already added");
-            DownloadEntry entry = mDownloads.get(updateInfo.getDownloadId());
+        final String downloadId = updateInfo.getDownloadId();
+        if (mDownloads.containsKey(downloadId)) {
+            // Re-import local sau xoa: thay entry cu bang ban moi
+            if (Update.LOCAL_ID.equals(downloadId)) {
+                Log.d(TAG, "Replacing local download entry");
+                Update update = new Update(updateInfo);
+                if (!fixUpdateStatus(update) && !availableOnline) {
+                    update.setPersistentStatus(UpdateStatus.Persistent.UNKNOWN);
+                    deleteUpdateAsync(update);
+                    Log.d(TAG, downloadId + " had an invalid status and is not online");
+                    return false;
+                }
+                update.setAvailableOnline(availableOnline);
+                mDownloads.put(downloadId, new DownloadEntry(update));
+                notifyUpdateChange(downloadId);
+                return true;
+            }
+            Log.d(TAG, "Download (" + downloadId + ") already added");
+            DownloadEntry entry = mDownloads.get(downloadId);
             if (entry != null) {
                 Update updateAdded = entry.mUpdate;
                 updateAdded.setAvailableOnline(availableOnline && updateAdded.getAvailableOnline());
@@ -366,6 +382,13 @@ public class UpdaterController {
             return;
         }
         Update update = entry.mUpdate;
+        String downloadUrl = update.getDownloadUrl();
+        if (downloadUrl == null || downloadUrl.isEmpty()) {
+            Log.e(TAG, "No download URL for " + downloadId);
+            update.setStatus(UpdateStatus.PAUSED_ERROR);
+            notifyUpdateChange(downloadId);
+            return;
+        }
         File destination = new File(mDownloadRoot, update.getName());
         if (destination.exists()) {
             destination = Utils.appendSequentialNumber(destination);
@@ -375,7 +398,7 @@ public class UpdaterController {
         DownloadClient downloadClient;
         try {
             downloadClient = new DownloadClient.Builder()
-                    .setUrl(update.getDownloadUrl())
+                    .setUrl(downloadUrl)
                     .setDestination(update.getFile())
                     .setDownloadCallback(getDownloadCallback(downloadId))
                     .setProgressListener(getProgressListener(downloadId))
@@ -419,10 +442,17 @@ public class UpdaterController {
             verifyUpdateAsync(downloadId);
             notifyUpdateChange(downloadId);
         } else {
+            String downloadUrl = update.getDownloadUrl();
+            if (downloadUrl == null || downloadUrl.isEmpty()) {
+                Log.e(TAG, "No download URL for " + downloadId);
+                update.setStatus(UpdateStatus.PAUSED_ERROR);
+                notifyUpdateChange(downloadId);
+                return;
+            }
             DownloadClient downloadClient;
             try {
                 downloadClient = new DownloadClient.Builder()
-                        .setUrl(update.getDownloadUrl())
+                        .setUrl(downloadUrl)
                         .setDestination(update.getFile())
                         .setDownloadCallback(getDownloadCallback(downloadId))
                         .setProgressListener(getProgressListener(downloadId))
@@ -483,8 +513,8 @@ public class UpdaterController {
             deleteUpdateAsync(update);
 
             final boolean isLocalUpdate = Update.LOCAL_ID.equals(downloadId);
-            if (!isLocalUpdate && !update.getAvailableOnline()) {
-                Log.d(TAG, "Download no longer available online, removing");
+            if (isLocalUpdate || !update.getAvailableOnline()) {
+                Log.d(TAG, "Removing download from list");
                 mDownloads.remove(downloadId);
                 notifyUpdateDelete(downloadId);
             } else {

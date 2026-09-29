@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.evolution.updater"
-    android:versionCode="1">
+    android:versionCode="3"
+    android:versionName="1.1">
 
     <uses-permission android:name="android.permission.ACCESS_CACHE_FILESYSTEM" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,17 +16,32 @@
     <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!--
+      defaultToDeviceProtectedStorage + directBootAware: giong Settings.
+      Khi user RUNNING_LOCKED (CE chua unlock), PM chi resolve MATCH_DIRECT_BOOT_AWARE.
+      versionCode tang de PMS rescan ApplicationInfo sau khi doi flag.
+    -->
     <application
+        android:name=".UpdaterApp"
         android:allowBackup="false"
+        android:defaultToDeviceProtectedStorage="true"
+        android:directBootAware="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="false">
 
+        <!-- false: locale do LocaleHelper + Pref — tranh AppCompat store/restore recreate -->
+        <meta-data
+            android:name="androidx.appcompat.app.AppCompatDelegate.autoStoreLocales"
+            android:value="false" />
+
         <activity
             android:name=".UpdatesActivity"
+            android:directBootAware="true"
             android:excludeFromRecents="true"
             android:label="@string/display_name"
             android:exported="true"
@@ -46,28 +63,44 @@
 
         <service
             android:name=".controller.UpdaterService"
+            android:directBootAware="true"
             android:foregroundServiceType="specialUse">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="updater"/>
         </service>
         <service
             android:name=".ExportUpdateService"
+            android:directBootAware="true"
             android:foregroundServiceType="specialUse">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="updater"/>
         </service>
 
-        <receiver android:name=".UpdaterReceiver" android:exported="false">
+        <receiver
+            android:name=".UpdaterReceiver"
+            android:directBootAware="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".UpdatesCheckReceiver" android:exported="true">
+        <receiver
+            android:name=".UpdatesCheckReceiver"
+            android:directBootAware="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <!-- androidx.profileinstaller merge mac dinh directBootAware=false → chi PARTIAL;
+             ep true de package co DIRECT_BOOT_AWARE day du khi RUNNING_LOCKED. -->
+        <receiver
+            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+            android:directBootAware="true"
+            tools:node="merge"
+            tools:replace="android:directBootAware" />
     </application>
 
 </manifest>

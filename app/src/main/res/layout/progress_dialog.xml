@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        app:indicatorColor="?android:attr/colorAccent"/>
+        app:indicatorColor="?attr/colorPrimary"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,6 +35,6 @@
         android:layout_gravity="center"
         android:layout_marginStart="16dp"
         android:text="@string/local_update_import_progress"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp" />
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="?attr/colorOnSurface" />
 </LinearLayout>

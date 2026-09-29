@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
-    android:nextFocusRight="@+id/update_action"
     android:layout_marginTop="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:nextFocusRight="@+id/update_expand"
     app:cardBackgroundColor="@color/tv_card_background"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="@dimen/updater_preference_corner_radius"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp"
     app:contentPadding="16dp">
 
     <LinearLayout
@@ -32,20 +34,29 @@
                 android:id="@+id/build_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:alpha="0.87"
                 android:drawablePadding="8dp"
                 android:maxLines="1"
-                android:paddingBottom="8sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16sp"
+                android:paddingBottom="4dp"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurface"
                 tools:text="Evolution X 15.1" />
+
+            <TextView
+                android:id="@+id/build_update_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Full ROM update" />
 
             <TextView
                 android:id="@+id/build_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:textSize="14sp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 tools:text="29 February 2018" />
 
             <RelativeLayout
@@ -61,11 +72,13 @@
 
                     <ProgressBar
                         android:id="@+id/progress_bar"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:paddingTop="4sp"
+                        android:paddingTop="8dp"
+                        android:indeterminateTint="?attr/colorPrimary"
+                        android:progressTint="?attr/colorPrimary"
                         tools:progress="65" />
 
                     <TextView
@@ -74,6 +87,8 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         tools:text="65%" />
                 </LinearLayout>
 
@@ -84,6 +99,8 @@
                     android:layout_below="@id/progress"
                     android:ellipsize="marquee"
                     android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="invisible"
                     tools:text="162 of 1.1GB (3 minutes left)"
                     tools:visibility="visible" />
@@ -92,32 +109,25 @@
                     android:id="@+id/build_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8sp"
+                    android:paddingTop="8dp"
                     android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     tools:text="300 MB"
                     tools:visibility="invisible" />
             </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <ImageButton
+            android:id="@+id/update_expand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ImageButton
-                android:id="@+id/update_menu"
-                style="?android:attr/actionOverflowButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:padding="8dp"
-                android:contentDescription="@null" />
-            <Button
-                android:id="@id/update_action"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                tools:text="Pause" />
-        </LinearLayout>
+            android:layout_gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/update_expand_options"
+            android:padding="10dp"
+            android:src="@drawable/ic_expand_chevron"
+            android:focusable="true"
+            app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

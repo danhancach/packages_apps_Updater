@@ -46,6 +46,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -364,6 +366,56 @@ public class Utils {
         boolean isAB = isABUpdate(zipFile);
         zipFile.close();
         return isAB;
+    }
+
+    private static final String OTA_METADATA_PATH = "META-INF/com/android/metadata";
+
+    /**
+     * Partial/incremental neu metadata zip co pre-device= hoac pre-build=.
+     * Tra ve false neu khong doc duoc metadata (goi phia tren phai fallback ten file).
+     */
+    public static boolean isIncrementalUpdate(File file) throws IOException {
+        try (ZipFile zipFile = new ZipFile(file)) {
+            ZipEntry entry = zipFile.getEntry(OTA_METADATA_PATH);
+            if (entry == null) {
+                throw new IOException("Missing " + OTA_METADATA_PATH);
+            }
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("pre-device=") || line.startsWith("pre-build=")) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Ten file chua incremental/partial (ignore case). */
+    public static boolean isIncrementalUpdateByName(String name) {
+        if (name == null) {
+            return false;
+        }
+        String lower = name.toLowerCase(Locale.US);
+        return lower.contains("incremental") || lower.contains("partial");
+    }
+
+    /**
+     * Nhan dien loai OTA: uu tien metadata zip local (ke ca LOCAL_ID);
+     * chua tai / zip loi → suy tu getName().
+     */
+    public static boolean isIncrementalUpdate(UpdateInfo update) {
+        File file = update.getFile();
+        if (file != null && file.exists() && file.length() > 0) {
+            try {
+                return isIncrementalUpdate(file);
+            } catch (IOException e) {
+                Log.d(TAG, "OTA type fallback to filename for " + update.getName(), e);
+            }
+        }
+        return isIncrementalUpdateByName(update.getName());
     }
 
     public static boolean hasTouchscreen(Context context) {

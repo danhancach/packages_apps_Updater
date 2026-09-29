@@ -77,7 +77,7 @@
     <string name="reboot">Reboot</string>
 
     <string name="menu_refresh">Refresh</string>
-    <string name="menu_preferences">Preferences</string>
+    <string name="menu_preferences">Settings</string>
     <string name="menu_auto_updates_check">Auto updates check</string>
     <string name="menu_auto_updates_check_interval_daily">Once a day</string>
     <string name="menu_auto_updates_check_interval_weekly">Once a week</string>
@@ -94,8 +94,8 @@
     <string name="menu_update_recovery">Update recovery</string>
     <string name="toast_forced_update_recovery">It is impossible to disable Evolution X Recovery updates on this device.</string>
 
-    <string name="snack_updates_found">New updates found</string>
-    <string name="snack_no_updates_found">No new updates found</string>
+    <string name="snack_updates_found">New updates available</string>
+    <string name="snack_no_updates_found">No new updates</string>
     <string name="snack_updates_check_failed">The update check failed. Please check your internet connection and try again later.</string>
 
     <string name="snack_download_failed">The download failed. Please check your internet connection and try again later.</string>
@@ -110,6 +110,9 @@
 
     <string name="list_build_version">Evolution X <xliff:g id="version" example="14.1">%1$s</xliff:g></string>
     <string name="list_build_version_date">Evolution X <xliff:g id="version" example="14.1">%1$s</xliff:g> - <xliff:g id="date" example="July 11, 2017">%2$s</xliff:g></string>
+    <string name="update_type_full">Full ROM update</string>
+    <string name="update_type_partial">Partial update</string>
+    <string name="update_expand_options">More options</string>
     <string name="list_download_progress_newer"><xliff:g id="filesize_without_unit" example="12.2">%1$s</xliff:g> of <xliff:g id="filesize_without_unit" example="310 MB">%2$s</xliff:g></string>
     <string name="list_download_progress_eta_newer"><xliff:g id="filesize_without_unit" example="12.2">%1$s</xliff:g> of <xliff:g id="filesize_without_unit" example="310 MB">%2$s</xliff:g> (<xliff:g id="eta" example="3 minutes left">%3$s</xliff:g>)</string>
     <string name="list_verifying_update">Verifying update</string>
@@ -172,12 +175,15 @@
     <string name="info_dialog_message">Evolution X updates are full installation packages. That means you can always install only the latest update, even if you skipped some in between!</string>
     <string name="info_dialog_ok">Thanks for the info!</string>
 
-    <string name="local_update_import">Local update</string>
-    <string name="local_update_import_progress">Importing local update\u2026</string>
+    <string name="local_update_import">Update from storage</string>
+    <string name="home_add_update">Add update</string>
+    <string name="local_update_import_summary">Select an OTA package from device storage</string>
+    <string name="local_update_import_progress">Importing update from storage\u2026</string>
     <string name="local_update_import_success">%1$s has been imported. Do you want to install it?</string>
-    <string name="local_update_import_failure">Failed to import local update</string>
+    <string name="local_update_import_failure">Failed to import update from storage</string>
     <string name="local_update_import_install">Install</string>
-    <string name="local_update_name">Local update</string>
+    <string name="local_update_import_later">Later</string>
+    <string name="local_update_name">Update from storage</string>
 
     <string name="welcome_title">Welcome</string>
     <string name="welcome_message">Please note that when multiple updates are available, there is no need to go update-by-update, you can always install the latest one directly, and then safely delete old updates to free up storage space.</string>

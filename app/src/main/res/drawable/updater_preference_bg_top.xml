@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Giong SettingsLib settingslib_round_background_top — khong MaterialCardView (Card Top bi phinh cao). -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSurfaceBright" />
+            <corners
+                android:topLeftRadius="@dimen/updater_preference_corner_radius"
+                android:topRightRadius="@dimen/updater_preference_corner_radius"
+                android:bottomLeftRadius="@dimen/updater_preference_corner_inner"
+                android:bottomRightRadius="@dimen/updater_preference_corner_inner" />
+        </shape>
+    </item>
+</ripple>

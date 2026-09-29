@@ -30,71 +30,83 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
-    compileSdk = 33
+    namespace = "org.evolution.updater"
+    // SDK 36 + android.jar da merge @hide (xem skill updater-gradle-debug)
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.evolution.updater"
         minSdk = 32
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = 3
+        versionName = "1.1"
+    }
+
+    signingConfigs {
+        // Ky platform/test-keys — remount/push system_ext (giong GameSpace)
+        create("platform") {
+            storeFile = file("platform.jks")
+            storePassword = "android"
+            keyAlias = "platform"
+            keyPassword = "android"
+        }
+        create("release") {
+            (keystoreProperties["keyAlias"] as String?)?.let { keyAlias = it }
+            (keystoreProperties["keyPassword"] as String?)?.let { keyPassword = it }
+            (keystoreProperties["storeFile"] as String?)?.let { storeFile = file(it) }
+            (keystoreProperties["storePassword"] as String?)?.let { storePassword = it }
+        }
     }
 
     buildTypes {
         getByName("release") {
-            // Includes the default ProGuard rules files.
             setProguardFiles(
                 listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
                 )
             )
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("platform")
+            }
         }
         getByName("debug") {
-            // Append .dev to package name so we won't conflict with AOSP build.
-            applicationIdSuffix = ".dev"
+            // Cung package system — KHONG them .dev (de push delen system_ext Updater)
+            isDebuggable = true
+            applicationIdSuffix = null
+            versionNameSuffix = "-gradle"
+            signingConfig = signingConfigs.getByName("platform")
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
-    signingConfigs {
-        create("release") {
-            (keystoreProperties["keyAlias"] as String?)?.let {
-                keyAlias = it
-            }
-            (keystoreProperties["keyPassword"] as String?)?.let {
-                keyPassword = it
-            }
-            (keystoreProperties["storeFile"] as String?)?.let {
-                storeFile = file(it)
-            }
-            (keystoreProperties["storePassword"] as String?)?.let {
-                storePassword = it
-            }
-        }
-    }
-    namespace = "org.lineageos.updater"
+    // symbols.xml nam o res-soong/ (chi Soong); Gradle chi dung src/main/res
 }
 
 dependencies {
+    // Optional @hide jars; uu tien SDK da merge framework (local.properties -> .gradle-sdk)
     compileOnly(fileTree(mapOf("dir" to "../system_libs", "include" to listOf("*.jar"))))
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
-    implementation("androidx.preference:preference:1.2.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("com.google.android.material:material:1.9.0-alpha01")
+    implementation("androidx.preference:preference:1.2.1")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("com.google.android.material:material:1.12.0")
 }
 
 configure<GenerateBpPluginExtension> {

@@ -36,12 +36,48 @@
     <string name="dialog_scratch_mounted_title">Không thể cài đặt cập nhật khi OverlayFS được gắn kết</string>
     <string name="reboot">Khởi động lại</string>
     <string name="menu_refresh">Làm mới</string>
-    <string name="menu_preferences">Tùy chỉnh</string>
+    <string name="menu_preferences">Cài đặt</string>
+    <string name="nav_tab_home">Trang chủ</string>
+    <string name="nav_tab_changelog">Nhật ký</string>
+    <string name="nav_tab_settings">Cài đặt</string>
+    <string name="nav_tab_about">Thông tin</string>
+    <string name="home_status_up_to_date">Đã cập nhật</string>
+    <plurals name="home_status_updates_available">
+        <item quantity="other">Có %d bản cập nhật</item>
+    </plurals>
+    <string name="home_build_date">Ngày bản dựng: <xliff:g id="build_date" example="Date">%1$s</xliff:g></string>
+    <string name="cloud_update_title">Cập nhật từ đám mây</string>
+    <string name="home_no_updates_available">Không có bản cập nhật nào</string>
+    <string name="home_empty_title">Không tìm thấy bản cập nhật</string>
+    <string name="about_support">Hỗ trợ</string>
+    <string name="about_software_version">Phiên bản phần mềm</string>
+    <string name="about_rom_section_title">Phiên bản ROM</string>
+    <string name="about_app_card_title">Trình cập nhật</string>
+    <string name="about_app_version_title">Phiên bản ứng dụng</string>
+    <string name="about_android_subtitle">Phiên bản Android</string>
+    <string name="about_kernel_subtitle">Kernel</string>
+    <string name="home_kernel_format">Kernel <xliff:g id="version" example="5.15.xxx">%1$s</xliff:g></string>
+    <string name="about_maintainer_subtitle">Maintainer</string>
+    <string name="support_telegram">Telegram</string>
+    <string name="support_github">GitHub</string>
+    <string name="brand_evolution_x">Evolution X</string>
+    <string name="changelog_content_title">Nhật ký thay đổi</string>
+    <string name="changelog_rom_section_title">Thông tin bản dựng</string>
     <string name="menu_auto_updates_check">Tự động kiểm tra bản cập nhật</string>
     <string name="menu_auto_updates_check_interval_daily">Mỗi ngày một lần</string>
     <string name="menu_auto_updates_check_interval_weekly">Mỗi tuần một lần</string>
     <string name="menu_auto_updates_check_interval_monthly">Mỗi tháng một lần</string>
     <string name="menu_auto_updates_check_interval_never">Không bao giờ</string>
+    <string name="settings_section_language">Ngôn ngữ</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_summary_language">Ngôn ngữ dùng trong ứng dụng Updater</string>
+    <string name="settings_language_system">Theo hệ thống</string>
+    <string name="settings_summary_auto_check">Tần suất tìm kiếm gói OTA mới</string>
+    <string name="settings_section_behavior">Tùy chọn cập nhật</string>
+    <string name="settings_summary_auto_delete">Xóa gói OTA sau khi cài đặt thành công</string>
+    <string name="settings_summary_metered_network">Cảnh báo trước khi tải xuống trên mạng được đo lường</string>
+    <string name="settings_summary_ab_perf_mode">Cấp thêm CPU trong quá trình cập nhật A/B</string>
+    <string name="settings_summary_update_recovery">Ghi recovery cùng với bản cập nhật hệ thống</string>
     <string name="menu_auto_delete_updates">Xóa bản cập nhật khi cài đặt hoàn tất</string>
     <string name="menu_delete_update">Xóa</string>
     <string name="menu_copy_url">Sao chép URL</string>
@@ -50,8 +86,8 @@
     <string name="menu_ab_perf_mode">Ưu tiên quá trình cập nhật</string>
     <string name="menu_update_recovery">Cập nhật recovery</string>
     <string name="toast_forced_update_recovery">Không thể tắt các bản cập nhật Evolution X Recovery trên thiết bị này.</string>
-    <string name="snack_updates_found">Đã tìm thấy bản cập nhật mới</string>
-    <string name="snack_no_updates_found">Không tìm thấy bản cập nhật mới</string>
+    <string name="snack_updates_found">Có bản cập nhật mới</string>
+    <string name="snack_no_updates_found">Không có bản cập nhật mới</string>
     <string name="snack_updates_check_failed">Kiểm tra bản cập nhật không thành công. Vui lòng kiểm tra kết nối internet của bạn và thử lại sau.</string>
     <string name="snack_download_failed">Tải xuống không thành công. Vui lòng kiểm tra kết nối internet của bạn và thử lại sau.</string>
     <string name="snack_download_verification_failed">Xác thực bản cập nhật thất bại.</string>
@@ -62,6 +98,9 @@
     <string name="header_last_updates_check">Lần kiểm tra cuối: <xliff:g id="date" example="1 January 1970">%1$s</xliff:g> (<xliff:g id="time" example="01:23">%2$s</xliff:g>)</string>
     <string name="list_build_version">Evolution X <xliff:g id="version" example="14.1">%1$s</xliff:g></string>
     <string name="list_build_version_date">Evolution X <xliff:g id="version" example="14.1">%1$s</xliff:g> - <xliff:g id="date" example="July 11, 2017">%2$s</xliff:g></string>
+    <string name="update_type_full">Bản cập nhật full ROM</string>
+    <string name="update_type_partial">Bản cập nhật một phần</string>
+    <string name="update_expand_options">Thêm tùy chọn</string>
     <string name="list_download_progress_newer"><xliff:g id="filesize_without_unit" example="12.2">%1$s</xliff:g> của <xliff:g id="filesize_without_unit" example="310 MB">%2$s</xliff:g></string>
     <string name="list_download_progress_eta_newer"><xliff:g id="filesize_without_unit" example="12.2">%1$s</xliff:g> của <xliff:g id="filesize_without_unit" example="310 MB">%2$s</xliff:g> (<xliff:g id="eta" example="3 minutes left">%3$s</xliff:g>)</string>
     <string name="list_verifying_update">Đang xác thực bản cập nhật</string>
@@ -108,12 +147,15 @@
     <string name="info_dialog_title">Bạn có biết?</string>
     <string name="info_dialog_message">Bản cập nhật Evolution X là gói cài đặt đầy đủ. Điều đó có nghĩa là bạn luôn có thể chỉ cài đặt bản cập nhật mới nhất, ngay cả khi bạn đã bỏ qua một số bản cập nhật ở giữa!</string>
     <string name="info_dialog_ok">Cảm ơn bạn đã thông tin!</string>
-    <string name="local_update_import">Cập nhật cục bộ</string>
-    <string name="local_update_import_progress">Đang nhập bản cập nhật cục bộ\u2026</string>
+    <string name="local_update_import">Cập nhật từ bộ nhớ</string>
+    <string name="home_add_update">Thêm bản cập nhật</string>
+    <string name="local_update_import_summary">Chọn gói OTA từ bộ nhớ thiết bị</string>
+    <string name="local_update_import_progress">Đang nhập bản cập nhật từ bộ nhớ\u2026</string>
     <string name="local_update_import_success">%1$s đã được nhập. Bạn có muốn cài đặt nó không?</string>
-    <string name="local_update_import_failure">Không nhập được bản cập nhật cục bộ</string>
+    <string name="local_update_import_failure">Không nhập được bản cập nhật từ bộ nhớ</string>
     <string name="local_update_import_install">Cài đặt</string>
-    <string name="local_update_name">Cập nhật cục bộ</string>
+    <string name="local_update_import_later">Để sau</string>
+    <string name="local_update_name">Cập nhật từ bộ nhớ</string>
     <string name="welcome_title">Chào mừng</string>
     <string name="welcome_message">Xin lưu ý rằng khi có nhiều bản cập nhật khả dụng, bạn không cần phải cập nhật từng bản một. Bạn có thể cài đặt trực tiếp bản cập nhật mới nhất rồi xóa an toàn các bản cập nhật cũ hơn để giải phóng dung lượng lưu trữ.</string>
 </resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CollapsingToolbar — Soong cung co the lay tu SettingsLib; fallback local -->
+    <dimen name="updater_collapsing_toolbar_height">152dp</dimen>
+    <dimen name="settingslib_scrim_visible_height_trigger">137dp</dimen>
+    <dimen name="expanded_title_margin_start">24dp</dimen>
+    <dimen name="expanded_title_margin_end">24dp</dimen>
+    <dimen name="expanded_title_margin_bottom">32dp</dimen>
+
+    <!-- BottomNavigationView compact -->
+    <dimen name="updater_bottom_nav_min_height">56dp</dimen>
+    <dimen name="updater_bottom_nav_icon_size">22dp</dimen>
+    <dimen name="updater_bottom_nav_item_padding_top">4dp</dimen>
+    <dimen name="updater_bottom_nav_item_padding_bottom">4dp</dimen>
+    <!-- Lop mo noi dung sat tren bottom nav (khop chieu cao tab gon) -->
+    <dimen name="updater_bottom_content_fade_height">20dp</dimen>
+    <dimen name="updater_scroll_padding_bottom">8dp</dimen>
+
+    <!-- Settings Expressive preference (SettingsLib v36)
+         Root row (ExpressivePreferenceRootLayoutStyle): minHeight 72 (space_large3),
+         pad ngang 16 (listPreferredItemPadding = space_small1), KHONG pad doc.
+         Text frame (ExpressivePreferenceTextFrameStyle): minHeight 40 (space_medium3),
+         paddingVertical 16 (space_small1) — chi gan len cot chu / stack 2 dong, khong len root.
+         Icon frame: icon 40 (space_medium3), marginEnd 12 (extrasmall6). -->
+    <dimen name="updater_preference_corner_radius">20dp</dimen>
+    <dimen name="updater_preference_corner_inner">4dp</dimen>
+    <dimen name="updater_preference_card_margin_horizontal">16dp</dimen>
+    <dimen name="updater_preference_card_gap">2dp</dimen>
+    <dimen name="updater_preference_row_min_height">72dp</dimen>
+    <!-- Chi dung cho text-frame / noi dung 2 dong ben trong; KHONG gan len root row -->
+    <dimen name="updater_preference_row_padding_vertical">16dp</dimen>
+    <dimen name="updater_preference_row_padding_start">16dp</dimen>
+    <dimen name="updater_preference_row_padding_end">16dp</dimen>
+    <dimen name="updater_preference_icon_size">40dp</dimen>
+    <dimen name="updater_preference_icon_margin_end">12dp</dimen>
+</resources>

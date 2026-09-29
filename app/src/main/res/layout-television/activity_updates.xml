@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
     android:id="@+id/main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:background="?attr/colorSurface">
+
+<LinearLayout
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -31,87 +37,82 @@
                 android:layout_height="wrap_content"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_evolution_logo"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="16dp"
+                android:contentDescription="@null" />
 
             <TextView
                 android:id="@+id/header_build_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/header_image"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp"
-                tools:text="Android 13"/>
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Android 17"/>
 
             <TextView
                 android:id="@+id/header_build_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/header_build_version"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 tools:text="1970-01-01"/>
 
             <TextView
                 android:id="@+id/header_last_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/header_build_date"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 tools:text="Last checked: 1970-01-01"/>
 
             <TextView
                 android:id="@+id/maintainer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/header_last_check"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp" />
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <LinearLayout 
+            <LinearLayout
                 android:id="@+id/support_icons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/maintainer_name"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="15dip"
-                android:paddingBottom="5dip" >
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:id="@+id/header_support"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/support_links"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="12sp" />
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <LinearLayout 
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="8dp">
 
-                    <ImageView
+                    <ImageButton
                         android:id="@+id/support_forum"
-                        android:layout_margin="2dp"
-                        android:cropToPadding="true"
-                        android:scaleType="fitXY"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:clickable="true"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:padding="12dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/support_forum_content_description"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/ic_forum"/>
 
-                    <ImageView
+                    <ImageButton
                         android:id="@+id/support_source"
-                        android:layout_margin="2dp"
-                        android:cropToPadding="true"
-                        android:scaleType="fitXY"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:clickable="true"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:padding="12dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/support_source_content_description"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/ic_firmware"/>
                 </LinearLayout>
             </LinearLayout>
@@ -124,23 +125,24 @@
             android:weightSum="2"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/refresh"
-                android:drawableStart="@drawable/ic_menu_refresh"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:icon="@drawable/ic_menu_refresh"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/menu_refresh"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+                android:layout_marginEnd="8dp"
+                android:text="@string/menu_refresh"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/preferences"
-                android:drawableStart="@drawable/ic_menu_preferences"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:icon="@drawable/ic_menu_preferences"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/menu_preferences"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+                android:text="@string/menu_preferences"/>
 
         </LinearLayout>
     </RelativeLayout>
@@ -164,7 +166,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/list_no_updates"
-                android:textColor="?android:textColorSecondary" />
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/colorOnSurfaceVariant" />
         </androidx.core.widget.NestedScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -184,7 +187,19 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:indeterminateTint="?attr/colorPrimary"
             android:visibility="gone"/>
 
     </RelativeLayout>
 </LinearLayout>
+
+    <!-- Overlay the thong bao (TV) -->
+    <FrameLayout
+        android:id="@+id/toast_host"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:clipChildren="false"
+        android:elevation="16dp" />
+</FrameLayout>
