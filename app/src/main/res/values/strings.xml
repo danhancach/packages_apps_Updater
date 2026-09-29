@@ -30,7 +30,7 @@
         Optional placeholders replaced at runtime:
           {device} - Device name
     -->
-    <string name="updater_server_url" translatable="false">https://sourceforge.net/projects/danhancach/files/pdx237/ota/builds/{device}.json/download</string>
+    <string name="updater_server_url" translatable="false">https://raw.githubusercontent.com/danhancach/packages_apps_Updater/cnb/builds/{device}.json</string>
 
     <!-- Lien ket ho tro hardcode — khong phu thuoc JSON OTA -->
     <string name="support_forum_url" translatable="false">https://t.me/SonyXperiaChat</string>

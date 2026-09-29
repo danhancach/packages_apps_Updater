@@ -1,0 +1,29 @@
+{
+  "response": [
+    {
+      "maintainer": "danhancach",
+      "currently_maintained": true,
+      "oem": "Sony",
+      "device": "Xperia 5 V",
+      "filename": "EvolutionX-17.0-20260920-pdx237-12.2-Unofficial.zip",
+      "download": "https://downloads.sourceforge.net/project/danhancach/pdx237/evoX/EvolutionX-17.0-20260920-pdx237-12.2-Unofficial.zip",
+      "timestamp": 1789881514,
+      "md5": "15bbab4c28f34a62deaa042996979e14",
+      "sha256": "45b8ecf5cc438abaedfb5447f379cf018040b6f32debc8a4b82518b692b66526",
+      "size": 3180141938,
+      "version": "12.2",
+      "buildtype": "userdebug",
+      "forum": "https://t.me/SonyXperiaChat",
+      "firmware": "https://github.com/danhancach",
+      "paypal": "",
+      "github": "danhancach",
+      "initial_installation_images": [
+        "boot",
+        "dtbo",
+        "recovery",
+        "vendor_boot"
+      ],
+      "extra_images": []
+    }
+  ]
+}
