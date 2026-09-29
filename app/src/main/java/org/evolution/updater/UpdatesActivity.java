@@ -532,6 +532,8 @@ public class UpdatesActivity extends UpdatesListActivity implements UpdateImport
             mAdapter.setData(updateIds);
             mAdapter.notifyDataSetChanged();
         }
+        // Cap nhat "Last checked"; support header da hien tu onCreate (resources)
+        updateLastCheckedString();
     }
 
     private void getUpdatesList() {
@@ -550,11 +552,11 @@ public class UpdatesActivity extends UpdatesListActivity implements UpdateImport
 
     private void processNewJson(File json, File jsonNew, boolean manualRefresh) {
         try {
-            loadUpdatesList(jsonNew, manualRefresh);
+            // Luu last-check truoc loadUpdatesList de header nhan timestamp moi
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             long millis = System.currentTimeMillis();
             preferences.edit().putLong(Constants.PREF_LAST_UPDATE_CHECK, millis).apply();
-            updateLastCheckedString();
+            loadUpdatesList(jsonNew, manualRefresh);
             if (json.exists() && Utils.isUpdateCheckEnabled(this) &&
                     Utils.checkForNewUpdates(json, jsonNew)) {
                 UpdatesCheckReceiver.updateRepeatingUpdatesCheck(this);
@@ -636,63 +638,29 @@ public class UpdatesActivity extends UpdatesListActivity implements UpdateImport
         headerBuildDate.setText(getString(R.string.current_build_date, StringGenerator.getDateLocalizedUTC(this,
                 DateFormat.LONG, BuildInfoUtils.getBuildDateTimestamp())));
 
+        // Support header hardcode tu resources — hien ngay khi mo app, khong cho JSON
         TextView MaintainerName = findViewById(R.id.maintainer_name);
-        String maintainer = Utils.getMaintainer();
-        LinearLayout supportLayout = (LinearLayout) this.findViewById(R.id.support_icons);
-        if (maintainer == null || maintainer.isEmpty()) {
-            MaintainerName.setVisibility(View.GONE);
-            supportLayout.setVisibility(LinearLayout.GONE);
-        } else {
-            MaintainerName.setText(getString(R.string.maintainer_name, maintainer));
-            MaintainerName.setVisibility(View.VISIBLE);
-            supportLayout.setVisibility(LinearLayout.VISIBLE);
-        }
+        LinearLayout supportLayout = findViewById(R.id.support_icons);
+        String maintainer = getString(R.string.default_maintainer_name);
+        MaintainerName.setText(getString(R.string.maintainer_name, maintainer));
+        MaintainerName.setVisibility(View.VISIBLE);
+        supportLayout.setVisibility(View.VISIBLE);
 
         ImageView forumImage = findViewById(R.id.support_forum);
-        String forum = Utils.getForum();
-        forumImage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setData(Uri.parse(forum));
-                startActivity(intent);
-                }
-            });
+        final String forumUrl = getString(R.string.support_forum_url);
+        forumImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(forumUrl));
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            startActivity(intent);
+        });
 
-        ImageView paypalImage = findViewById(R.id.support_paypal);
-        String paypal = Utils.getPaypal();
-        if (paypal == null || paypal.isEmpty()) {
-            paypalImage.setVisibility(View.GONE);
-        } else {
-            paypalImage.setVisibility(View.VISIBLE);
-            paypalImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                    intent.setData(Uri.parse(paypal));
-                    startActivity(intent);
-                    }
-            });
-        }
-
-        ImageView firmwareImage = findViewById(R.id.support_firmware);
-        String firmware = Utils.getFirmware();
-        if (firmware == null || firmware.isEmpty()) {
-            firmwareImage.setVisibility(View.GONE);
-        } else {
-            firmwareImage.setVisibility(View.VISIBLE);
-            firmwareImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                    intent.setData(Uri.parse(firmware));
-                    startActivity(intent);
-                    }
-            });
-        }
+        ImageView sourceImage = findViewById(R.id.support_source);
+        final String sourceUrl = getString(R.string.support_source_url);
+        sourceImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(sourceUrl));
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            startActivity(intent);
+        });
     }
 
     private void handleDownloadStatusChange(String downloadId) {

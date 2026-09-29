@@ -85,10 +85,11 @@ public class Utils {
         update.setFileSize(object.getLong("size"));
         update.setDownloadUrl(object.getString("download"));
         update.setVersion(object.getString("version"));
-        mMaintainer = object.getString("maintainer");
-        mForum = object.getString("forum");
-        mFirmware = object.getString("firmware");
-        mPaypal = object.getString("paypal");
+        // optString: paypal/firmware co the thieu hoac rong (UI khong dung donate)
+        mMaintainer = object.optString("maintainer", "");
+        mForum = object.optString("forum", "");
+        mFirmware = object.optString("firmware", "");
+        mPaypal = object.optString("paypal", "");
         return update;
     }
 

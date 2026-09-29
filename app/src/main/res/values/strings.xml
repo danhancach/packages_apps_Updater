@@ -31,6 +31,13 @@
           {device} - Device name
     -->
     <string name="updater_server_url" translatable="false">https://sourceforge.net/projects/danhancach/files/pdx237/ota/builds/{device}.json/download</string>
+
+    <!-- Lien ket ho tro hardcode — khong phu thuoc JSON OTA -->
+    <string name="support_forum_url" translatable="false">https://t.me/SonyXperiaChat</string>
+    <string name="support_source_url" translatable="false">https://github.com/danhancach</string>
+    <string name="default_maintainer_name" translatable="false">danhancach</string>
+    <string name="support_source_content_description" translatable="false">Source</string>
+    <string name="support_forum_content_description" translatable="false">Forum</string>
     <string name="verification_failed_notification">Verification failed</string>
     <string name="verifying_download_notification">Verifying update</string>
     <string name="downloading_notification">Downloading</string>
