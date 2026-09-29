@@ -85,7 +85,7 @@ public class Utils {
         update.setFileSize(object.getLong("size"));
         update.setDownloadUrl(object.getString("download"));
         update.setVersion(object.getString("version"));
-        // optString: paypal/firmware co the thieu hoac rong (UI khong dung donate)
+        // JSON compat: forum/firmware/paypal optional; UI support hardcode Telegram+GitHub
         mMaintainer = object.optString("maintainer", "");
         mForum = object.optString("forum", "");
         mFirmware = object.optString("firmware", "");
@@ -410,6 +410,7 @@ public class Utils {
         return new File(Constants.UPDATE_RECOVERY_EXEC).exists();
     }
 
+    // Getter JSON field (UI hien khong goi; giu de compat / dung sau)
     public static String getMaintainer() {
         return mMaintainer;
     }
