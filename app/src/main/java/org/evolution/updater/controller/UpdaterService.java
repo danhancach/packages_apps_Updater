@@ -110,6 +110,15 @@ public class UpdaterService extends Service {
                 String downloadId = intent.getStringExtra(UpdaterController.EXTRA_DOWNLOAD_ID);
                 if (UpdaterController.ACTION_UPDATE_STATUS.equals(intent.getAction())) {
                     UpdateInfo update = mUpdaterController.getUpdate(downloadId);
+                    if (update == null) {
+                        // Entry mat khoi map nhung prefs da needs_reboot — van doi notification
+                        if (downloadId != null
+                                && ABUpdateInstaller.isWaitingForReboot(
+                                        UpdaterService.this, downloadId)) {
+                            handleInstalledWithoutUpdate();
+                        }
+                        return;
+                    }
                     setNotificationTitle(update);
                     Bundle extras = new Bundle();
                     extras.putString(UpdaterController.EXTRA_DOWNLOAD_ID, downloadId);
@@ -117,19 +126,22 @@ public class UpdaterService extends Service {
                     handleUpdateStatusChange(update);
                 } else if (UpdaterController.ACTION_DOWNLOAD_PROGRESS.equals(intent.getAction())) {
                     UpdateInfo update = mUpdaterController.getUpdate(downloadId);
-                    handleDownloadProgressChange(update);
+                    if (update != null) {
+                        handleDownloadProgressChange(update);
+                    }
                 } else if (UpdaterController.ACTION_INSTALL_PROGRESS.equals(intent.getAction())) {
                     UpdateInfo update = mUpdaterController.getUpdate(downloadId);
-                    setNotificationTitle(update);
-                    handleInstallProgress(update);
+                    if (update != null) {
+                        handleInstallProgress(update);
+                    }
                 } else if (UpdaterController.ACTION_UPDATE_REMOVED.equals(intent.getAction())) {
                     final boolean isLocalUpdate = Update.LOCAL_ID.equals(downloadId);
                     Bundle extras = mNotificationBuilder.getExtras();
-                    if (!isLocalUpdate && downloadId != null && downloadId.equals(
+                    if (!isLocalUpdate && downloadId != null && extras != null && downloadId.equals(
                             extras.getString(UpdaterController.EXTRA_DOWNLOAD_ID))) {
                         mNotificationBuilder.setExtras(null);
                         UpdateInfo update = mUpdaterController.getUpdate(downloadId);
-                        if (update.getStatus() != UpdateStatus.INSTALLED) {
+                        if (update == null || update.getStatus() != UpdateStatus.INSTALLED) {
                             mNotificationManager.cancel(NOTIFICATION_ID);
                         }
                     }
@@ -400,26 +412,12 @@ public class UpdaterService extends Service {
                 break;
             }
             case INSTALLED: {
-                stopForeground(STOP_FOREGROUND_DETACH);
-                mNotificationBuilder.mActions.clear();
-                mNotificationBuilder.setStyle(null);
-                mNotificationBuilder.setSmallIcon(R.drawable.ic_system_update);
-                mNotificationBuilder.setProgress(0, 0, false);
-                String text = getString(R.string.installing_update_finished);
-                mNotificationBuilder.setContentText(text);
-                mNotificationBuilder.addAction(R.drawable.ic_system_update,
-                        getString(R.string.reboot),
-                        getRebootPendingIntent());
-                mNotificationBuilder.setTicker(text);
-                mNotificationBuilder.setOngoing(false);
-                mNotificationBuilder.setAutoCancel(true);
-                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+                showInstalledRebootNotification();
 
                 SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
                 boolean deleteUpdate = pref.getBoolean(Constants.PREF_AUTO_DELETE_UPDATES, false);
-                // Keep local imported update visible while waiting for reboot,
-                // otherwise returning to the updater screen shows an empty list.
-                // Auto-delete remains only for non-local online updates.
+                // Giu local update khi cho reboot — danh sach khong trong khi quay lai app.
+                // Auto-delete chi ap dung ban online (khong phai LOCAL_ID).
                 if (deleteUpdate && !Update.LOCAL_ID.equals(update.getDownloadId())) {
                     mUpdaterController.deleteUpdate(update.getDownloadId());
                 }
@@ -485,7 +483,34 @@ public class UpdaterService extends Service {
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
+    private void handleInstalledWithoutUpdate() {
+        showInstalledRebootNotification();
+        tryStopSelf();
+    }
+
+    private void showInstalledRebootNotification() {
+        stopForeground(STOP_FOREGROUND_DETACH);
+        mNotificationBuilder.mActions.clear();
+        mNotificationBuilder.setStyle(null);
+        mNotificationBuilder.setSmallIcon(R.drawable.ic_system_update);
+        mNotificationBuilder.setProgress(0, 0, false);
+        String text = getString(R.string.installing_update_finished);
+        mNotificationBuilder.setContentText(text);
+        mNotificationBuilder.addAction(R.drawable.ic_system_update,
+                getString(R.string.reboot),
+                getRebootPendingIntent());
+        mNotificationBuilder.setTicker(text);
+        mNotificationBuilder.setOngoing(false);
+        mNotificationBuilder.setAutoCancel(true);
+        mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+    }
+
     private void handleInstallProgress(UpdateInfo update) {
+        // Khong ghi de notification reboot bang progress FINALIZING tre
+        if (update.getStatus() == UpdateStatus.INSTALLED
+                || ABUpdateInstaller.isWaitingForReboot(this, update.getDownloadId())) {
+            return;
+        }
         setNotificationTitle(update);
         int progress = update.getInstallProgress();
         mNotificationBuilder.setProgress(100, progress, false);

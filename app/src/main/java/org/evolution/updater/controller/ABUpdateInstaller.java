@@ -63,39 +63,43 @@ class ABUpdateInstaller {
 
         @Override
         public void onStatusUpdate(int status, float percent) {
+            // Dam bao mDownloadId con dung khi reconnect / race
+            ensureDownloadId();
             Update update = mUpdaterController.getActualUpdate(mDownloadId);
-            if (update == null) {
-                // We read the id from a preference, the update could no longer exist
-                installationDone(status == UpdateEngine.UpdateStatusConstants.UPDATED_NEED_REBOOT);
-                return;
-            }
 
             switch (status) {
                 case UpdateEngine.UpdateStatusConstants.DOWNLOADING:
                 case UpdateEngine.UpdateStatusConstants.FINALIZING: {
+                    if (update == null) {
+                        // Doc id tu pref; ban cap nhat co the da bi xoa
+                        return;
+                    }
                     if (update.getStatus() != UpdateStatus.INSTALLING) {
                         update.setStatus(UpdateStatus.INSTALLING);
                         mUpdaterController.notifyUpdateChange(mDownloadId);
                     }
                     mProgress = Math.round(percent * 100);
-                    mUpdaterController.getActualUpdate(mDownloadId).setInstallProgress(mProgress);
+                    update.setInstallProgress(mProgress);
                     mFinalizing = status == UpdateEngine.UpdateStatusConstants.FINALIZING;
-                    mUpdaterController.getActualUpdate(mDownloadId).setFinalizing(mFinalizing);
+                    update.setFinalizing(mFinalizing);
                     mUpdaterController.notifyInstallProgress(mDownloadId);
                 }
                 break;
 
                 case UpdateEngine.UpdateStatusConstants.UPDATED_NEED_REBOOT: {
-                    installationDone(true);
-                    update.setInstallProgress(0);
-                    update.setStatus(UpdateStatus.INSTALLED);
-                    mUpdaterController.notifyUpdateChange(mDownloadId);
+                    // Luon set prefs + INSTALLED + notify (ke ca update null se van notify id)
+                    onInstallSucceeded(update);
                 }
                 break;
 
                 case UpdateEngine.UpdateStatusConstants.IDLE: {
-                    // The service was restarted because we thought we were installing an
-                    // update, but we aren't, so clear everything.
+                    // Da cai xong cho reboot: khong xoa needs_reboot khi IDLE den sau
+                    SharedPreferences pref =
+                            PreferenceManager.getDefaultSharedPreferences(mContext);
+                    if (pref.getString(Constants.PREF_NEEDS_REBOOT_ID, null) != null) {
+                        return;
+                    }
+                    // Service restart khi tuong dang cai nhung engine IDLE → don pref
                     installationDone(false);
                 }
                 break;
@@ -104,9 +108,14 @@ class ABUpdateInstaller {
 
         @Override
         public void onPayloadApplicationComplete(int errorCode) {
-            if (errorCode != UpdateEngine.ErrorCodeConstants.SUCCESS) {
-                installationDone(false);
-                Update update = mUpdaterController.getActualUpdate(mDownloadId);
+            ensureDownloadId();
+            Update update = mUpdaterController.getActualUpdate(mDownloadId);
+            if (errorCode == UpdateEngine.ErrorCodeConstants.SUCCESS) {
+                onInstallSucceeded(update);
+                return;
+            }
+            installationDone(false);
+            if (update != null) {
                 update.setInstallProgress(0);
                 update.setStatus(UpdateStatus.INSTALLATION_FAILED);
                 mUpdaterController.notifyUpdateChange(mDownloadId);
@@ -223,9 +232,7 @@ class ABUpdateInstaller {
             mUpdateEngine.applyPayload(zipFileUri, offset, 0, headerKeyValuePairs);
         } catch (ServiceSpecificException e) {
             if (e.errorCode == 66 /* kUpdateAlreadyInstalled */) {
-                installationDone(true);
-                mUpdaterController.getActualUpdate(mDownloadId).setStatus(UpdateStatus.INSTALLED);
-                mUpdaterController.notifyUpdateChange(mDownloadId);
+                onInstallSucceeded(mUpdaterController.getActualUpdate(mDownloadId));
                 return;
             }
             throw e;
@@ -246,17 +253,16 @@ class ABUpdateInstaller {
             return;
         }
 
-        if (mDownloadId == null) {
-            return;
-        }
-
-
         if (mBound) {
             return;
         }
 
         mDownloadId = PreferenceManager.getDefaultSharedPreferences(mContext)
                 .getString(PREF_INSTALLING_AB_ID, null);
+        if (mDownloadId == null) {
+            Log.e(TAG, "reconnect: missing installing_ab_id");
+            return;
+        }
 
         // We will get a status notification as soon as we are connected
         mBound = mUpdateEngine.bind(mUpdateEngineCallback);
@@ -266,11 +272,42 @@ class ABUpdateInstaller {
 
     }
 
+    private void ensureDownloadId() {
+        if (mDownloadId != null) {
+            return;
+        }
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mDownloadId = pref.getString(PREF_INSTALLING_AB_ID, null);
+        if (mDownloadId == null) {
+            mDownloadId = pref.getString(Constants.PREF_NEEDS_REBOOT_ID, null);
+        }
+    }
+
+    // Danh dau cai xong, cho reboot; an toan goi nhieu lan (NEED_REBOOT + SUCCESS)
+    private void onInstallSucceeded(Update update) {
+        boolean alreadyInstalled = update != null
+                && update.getStatus() == UpdateStatus.INSTALLED
+                && isWaitingForReboot(mContext, mDownloadId);
+        installationDone(true);
+        if (update != null) {
+            update.setInstallProgress(0);
+            update.setFinalizing(false);
+            update.setStatus(UpdateStatus.INSTALLED);
+        } else {
+            Log.w(TAG, "Install succeeded but update entry missing: " + mDownloadId);
+        }
+        // Bo notify lan 2 neu da INSTALLED + needs_reboot (tranh nhay notification)
+        if (!alreadyInstalled && mDownloadId != null) {
+            mUpdaterController.notifyUpdateChange(mDownloadId);
+        }
+    }
+
     private void installationDone(boolean needsReboot) {
         String id = needsReboot ? mDownloadId : null;
         PreferenceManager.getDefaultSharedPreferences(mContext).edit()
                 .putString(Constants.PREF_NEEDS_REBOOT_ID, id)
                 .remove(PREF_INSTALLING_AB_ID)
+                .remove(PREF_INSTALLING_SUSPENDED_AB_ID)
                 .apply();
     }
 

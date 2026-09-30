@@ -230,10 +230,6 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
             } else {
                 primaryAction = Action.DELETE;
             }
-        } else if (mUpdaterController.isWaitingForReboot(downloadId)) {
-            canDelete = false;
-            primaryAction = Action.REBOOT;
-            primaryEnabled = true;
         } else if (update.getPersistentStatus() == UpdateStatus.Persistent.VERIFIED) {
             canDelete = true;
             primaryAction = Utils.canInstall(update) ? Action.INSTALL : Action.DELETE;
@@ -248,6 +244,16 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
         viewHolder.mBuildSize.setText(fileSize);
 
         bindExpandMenu(viewHolder, update, primaryAction, primaryEnabled, canDelete);
+        viewHolder.mProgress.setVisibility(View.INVISIBLE);
+        viewHolder.mProgressText.setVisibility(View.INVISIBLE);
+        viewHolder.mBuildSize.setVisibility(View.VISIBLE);
+    }
+
+    // UI cho trang thai cho reboot (local + online)
+    private void handleWaitingForReboot(ViewHolder viewHolder, UpdateInfo update) {
+        String fileSize = Formatter.formatShortFileSize(mActivity, update.getFileSize());
+        viewHolder.mBuildSize.setText(fileSize);
+        bindExpandMenu(viewHolder, update, Action.REBOOT, true, false);
         viewHolder.mProgress.setVisibility(View.INVISIBLE);
         viewHolder.mProgressText.setVisibility(View.INVISIBLE);
         viewHolder.mBuildSize.setVisibility(View.VISIBLE);
@@ -296,6 +302,12 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
                 ? R.string.update_type_partial
                 : R.string.update_type_full);
         viewHolder.mBuildDate.setText(buildDate);
+
+        // Reboot truoc active/LOCAL_ID — tranh ket FINALIZING sau khi engine xong
+        if (mUpdaterController.isWaitingForReboot(downloadId)) {
+            handleWaitingForReboot(viewHolder, update);
+            return;
+        }
 
         if (activeLayout) {
             handleActiveStatus(viewHolder, update);
@@ -495,9 +507,20 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
             Action primaryAction, boolean primaryEnabled, boolean canDelete) {
         viewHolder.mExpand.setEnabled(true);
         viewHolder.mExpand.setAlpha(1.f);
-        viewHolder.mExpand.setOnClickListener(
-                v -> startActionMode(update, primaryAction, primaryEnabled, canDelete,
-                        viewHolder.mExpand));
+        if (primaryAction == Action.REBOOT) {
+            // Cho reboot: chevron mo menu → nut mui ten xoay tron reboot
+            viewHolder.mExpand.setImageResource(R.drawable.ic_menu_reboot);
+            viewHolder.mExpand.setContentDescription(mActivity.getString(R.string.reboot));
+            viewHolder.mExpand.setOnClickListener(
+                    v -> runPrimaryAction(Action.REBOOT, update.getDownloadId()));
+        } else {
+            viewHolder.mExpand.setImageResource(R.drawable.ic_expand_chevron);
+            viewHolder.mExpand.setContentDescription(
+                    mActivity.getString(R.string.update_expand_options));
+            viewHolder.mExpand.setOnClickListener(
+                    v -> startActionMode(update, primaryAction, primaryEnabled, canDelete,
+                            viewHolder.mExpand));
+        }
     }
 
     private boolean isBusy() {
