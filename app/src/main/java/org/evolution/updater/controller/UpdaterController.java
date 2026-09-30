@@ -27,6 +27,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.evolution.updater.UpdatesDbHelper;
 import org.evolution.updater.download.DownloadClient;
+import org.evolution.updater.download.HttpURLConnectionClient;
 import org.evolution.updater.misc.Utils;
 import org.evolution.updater.model.Update;
 import org.evolution.updater.model.UpdateInfo;
@@ -430,13 +431,16 @@ public class UpdaterController {
         }
         Update update = entry.mUpdate;
         File file = update.getFile();
-        if (file == null || !file.exists()) {
+        boolean hasParts = file != null && HttpURLConnectionClient.hasPartFiles(file);
+        if (file == null || (!file.exists() && !hasParts)) {
             Log.e(TAG, "The destination file of " + downloadId + " doesn't exist, can't resume");
             update.setStatus(UpdateStatus.PAUSED_ERROR);
             notifyUpdateChange(downloadId);
             return;
         }
-        if (file.exists() && update.getFileSize() > 0 && file.length() >= update.getFileSize()) {
+        // File du size va khong con .part → coi nhu da tai xong
+        if (file.exists() && !hasParts && update.getFileSize() > 0
+                && file.length() >= update.getFileSize()) {
             Log.d(TAG, "File already downloaded, starting verification");
             update.setStatus(UpdateStatus.VERIFYING);
             verifyUpdateAsync(downloadId);
@@ -492,8 +496,11 @@ public class UpdaterController {
     private void deleteUpdateAsync(final Update update) {
         new Thread(() -> {
             File file = update.getFile();
-            if (file.exists() && !file.delete()) {
-                Log.e(TAG, "Could not delete " + file.getAbsolutePath());
+            if (file != null) {
+                HttpURLConnectionClient.cleanupPartFiles(file);
+                if (file.exists() && !file.delete()) {
+                    Log.e(TAG, "Could not delete " + file.getAbsolutePath());
+                }
             }
             mUpdatesDbHelper.removeUpdate(update.getDownloadId());
         }).start();
