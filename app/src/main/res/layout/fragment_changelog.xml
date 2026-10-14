@@ -69,9 +69,9 @@
                     style="@style/Widget.Updater.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/updater_preference_card_margin_horizontal"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/updater_preference_card_margin_horizontal"
                     app:contentPadding="20dp">
 
                     <TextView
@@ -143,6 +143,7 @@
             android:id="@+id/changelog_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:alpha="0.6"
             android:gravity="center"
             android:padding="32dp"
             android:text="@string/changelog_empty"

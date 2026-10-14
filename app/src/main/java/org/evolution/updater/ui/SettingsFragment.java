@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +25,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
-import com.google.android.material.shape.ShapeAppearanceModel;
 
 import org.evolution.updater.R;
 import org.evolution.updater.UpdatesActivity;
@@ -60,10 +59,10 @@ public class SettingsFragment extends Fragment {
     private MaterialSwitch mMeteredNetworkWarning;
     private MaterialSwitch mAbPerfMode;
     private MaterialSwitch mUpdateRecovery;
-    private MaterialCardView mAutoDeleteCard;
-    private MaterialCardView mMeteredNetworkCard;
-    private MaterialCardView mAbPerfModeCard;
-    private MaterialCardView mUpdateRecoveryCard;
+    private LinearLayout mAutoDeleteCard;
+    private LinearLayout mMeteredNetworkCard;
+    private LinearLayout mAbPerfModeCard;
+    private LinearLayout mUpdateRecoveryCard;
     private int mSelectedInterval = 0;
     private boolean mSpinnerReady;
 
@@ -115,26 +114,29 @@ public class SettingsFragment extends Fragment {
                 prefs.getBoolean(Constants.PREF_MOBILE_DATA_WARNING, true)));
         mAbPerfMode.setChecked(prefs.getBoolean(Constants.PREF_AB_PERF_MODE, false));
 
+        mAutoDeleteCard.setOnClickListener(v -> mAutoDelete.toggle());
+        mMeteredNetworkCard.setOnClickListener(v -> mMeteredNetworkWarning.toggle());
+        mAbPerfModeCard.setOnClickListener(v -> mAbPerfMode.toggle());
+
         if (getResources().getBoolean(R.bool.config_hideRecoveryUpdate)) {
             mUpdateRecoveryCard.setVisibility(View.GONE);
         } else if (Utils.isRecoveryUpdateExecPresent()) {
             mUpdateRecovery.setChecked(
                     SystemProperties.getBoolean(Constants.UPDATE_RECOVERY_PROPERTY, false));
+            mUpdateRecoveryCard.setOnClickListener(v -> mUpdateRecovery.toggle());
         } else {
             mUpdateRecovery.setChecked(true);
-            mUpdateRecovery.setOnTouchListener(new View.OnTouchListener() {
-                private Toast forcedUpdateToast = null;
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (forcedUpdateToast != null) {
-                        forcedUpdateToast.cancel();
-                    }
-                    forcedUpdateToast = Toast.makeText(requireContext().getApplicationContext(),
-                            getString(R.string.toast_forced_update_recovery), Toast.LENGTH_SHORT);
-                    forcedUpdateToast.show();
-                    return true;
+            View.OnClickListener forcedToastListener = v -> {
+                Toast.makeText(requireContext().getApplicationContext(),
+                        getString(R.string.toast_forced_update_recovery), Toast.LENGTH_SHORT).show();
+            };
+            mUpdateRecoveryCard.setOnClickListener(forcedToastListener);
+            // Chi toast o ACTION_UP — tranh spam khi DOWN/MOVE/UP
+            mUpdateRecovery.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    forcedToastListener.onClick(v);
                 }
+                return true;
             });
         }
 
@@ -144,36 +146,35 @@ public class SettingsFragment extends Fragment {
     }
 
     /**
-     * Gan shape Top / Center / Bottom / Single cho cac the Behavior dang VISIBLE —
-     * giong SettingsPreferenceGroupAdapter (20dp mep ngoai, 4dp mep noi).
+     * Gan nen Top / Center / Bottom / Single cho cac the Behavior dang VISIBLE —
+     * mirror UpdatesListAdapter.applyPreferenceGroupStyle (20dp mep ngoai, 4dp mep noi).
      */
     private void applyBehaviorGroupCorners() {
-        MaterialCardView[] all = {
+        LinearLayout[] all = {
                 mAutoDeleteCard,
                 mMeteredNetworkCard,
                 mAbPerfModeCard,
                 mUpdateRecoveryCard
         };
-        List<MaterialCardView> visible = new ArrayList<>();
-        for (MaterialCardView card : all) {
+        List<LinearLayout> visible = new ArrayList<>();
+        for (LinearLayout card : all) {
             if (card != null && card.getVisibility() == View.VISIBLE) {
                 visible.add(card);
             }
         }
         final int n = visible.size();
         for (int i = 0; i < n; i++) {
-            int shapeRes;
+            int bgRes;
             if (n == 1) {
-                shapeRes = R.style.ShapeAppearance_Updater_Preference_Single;
+                bgRes = R.drawable.updater_preference_bg_single;
             } else if (i == 0) {
-                shapeRes = R.style.ShapeAppearance_Updater_Preference_Top;
+                bgRes = R.drawable.updater_preference_bg_top;
             } else if (i == n - 1) {
-                shapeRes = R.style.ShapeAppearance_Updater_Preference_Bottom;
+                bgRes = R.drawable.updater_preference_bg_bottom;
             } else {
-                shapeRes = R.style.ShapeAppearance_Updater_Preference_Center;
+                bgRes = R.drawable.updater_preference_bg_center;
             }
-            visible.get(i).setShapeAppearanceModel(
-                    ShapeAppearanceModel.builder(requireContext(), shapeRes, 0).build());
+            visible.get(i).setBackgroundResource(bgRes);
         }
     }
 

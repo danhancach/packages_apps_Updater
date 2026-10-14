@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="24dp"
-                android:paddingTop="8dp"
+                android:paddingTop="24dp"
                 android:paddingEnd="24dp"
                 android:paddingBottom="4dp"
                 android:text="@string/about_app_card_title"
@@ -86,13 +86,19 @@
                 android:paddingStart="@dimen/updater_preference_row_padding_start"
                 android:paddingEnd="@dimen/updater_preference_row_padding_end">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="@dimen/updater_preference_icon_margin_end"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_app_version"
-                    app:tint="?attr/colorOnSurface" />
+                <FrameLayout
+                    android:layout_width="@dimen/updater_preference_icon_size"
+                    android:layout_height="@dimen/updater_preference_icon_size"
+                    android:layout_marginEnd="@dimen/updater_preference_icon_margin_end">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_app_version"
+                        app:tint="?attr/colorOnSurface" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -134,89 +140,85 @@
 
             <!-- Nhom Expressive: bg drawable nhu SettingsLib (khong MaterialCardView — Card.Top bi phinh cao). -->
             <LinearLayout
-                android:id="@+id/support_forum_card"
+                android:id="@+id/support_forum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/updater_preference_card_margin_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="@dimen/updater_preference_card_margin_horizontal"
                 android:background="@drawable/updater_preference_bg_top"
-                android:orientation="vertical">
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/updater_preference_row_min_height"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/updater_preference_row_padding_start"
+                android:paddingEnd="@dimen/updater_preference_row_padding_end">
 
-                <LinearLayout
-                    android:id="@+id/support_forum"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:minHeight="@dimen/updater_preference_row_min_height"
-                    android:orientation="horizontal"
-                    android:paddingStart="@dimen/updater_preference_row_padding_start"
-                    android:paddingEnd="@dimen/updater_preference_row_padding_end">
+                <FrameLayout
+                    android:layout_width="@dimen/updater_preference_icon_size"
+                    android:layout_height="@dimen/updater_preference_icon_size"
+                    android:layout_marginEnd="@dimen/updater_preference_icon_margin_end">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginEnd="@dimen/updater_preference_icon_margin_end"
+                        android:layout_gravity="center"
                         android:contentDescription="@null"
                         android:src="@drawable/ic_forum"
                         app:tint="?attr/colorOnSurface" />
+                </FrameLayout>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="@dimen/updater_preference_row_padding_vertical"
-                        android:paddingBottom="@dimen/updater_preference_row_padding_vertical"
-                        android:text="@string/support_telegram"
-                        android:textAppearance="?android:attr/textAppearanceListItem"
-                        android:textColor="?attr/colorOnSurface" />
-                </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="@dimen/updater_preference_row_padding_vertical"
+                    android:paddingBottom="@dimen/updater_preference_row_padding_vertical"
+                    android:text="@string/support_telegram"
+                    android:textAppearance="?android:attr/textAppearanceListItem"
+                    android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/support_source_card"
+                android:id="@+id/support_source"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/updater_preference_card_margin_horizontal"
                 android:layout_marginTop="@dimen/updater_preference_card_gap"
                 android:layout_marginEnd="@dimen/updater_preference_card_margin_horizontal"
                 android:background="@drawable/updater_preference_bg_center"
-                android:orientation="vertical">
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/updater_preference_row_min_height"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/updater_preference_row_padding_start"
+                android:paddingEnd="@dimen/updater_preference_row_padding_end">
 
-                <LinearLayout
-                    android:id="@+id/support_source"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:minHeight="@dimen/updater_preference_row_min_height"
-                    android:orientation="horizontal"
-                    android:paddingStart="@dimen/updater_preference_row_padding_start"
-                    android:paddingEnd="@dimen/updater_preference_row_padding_end">
+                <FrameLayout
+                    android:layout_width="@dimen/updater_preference_icon_size"
+                    android:layout_height="@dimen/updater_preference_icon_size"
+                    android:layout_marginEnd="@dimen/updater_preference_icon_margin_end">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginEnd="@dimen/updater_preference_icon_margin_end"
+                        android:layout_gravity="center"
                         android:contentDescription="@null"
                         android:src="@drawable/ic_github"
                         app:tint="?attr/colorOnSurface" />
+                </FrameLayout>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="@dimen/updater_preference_row_padding_vertical"
-                        android:paddingBottom="@dimen/updater_preference_row_padding_vertical"
-                        android:text="@string/support_github"
-                        android:textAppearance="?android:attr/textAppearanceListItem"
-                        android:textColor="?attr/colorOnSurface" />
-                </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="@dimen/updater_preference_row_padding_vertical"
+                    android:paddingBottom="@dimen/updater_preference_row_padding_vertical"
+                    android:text="@string/support_github"
+                    android:textAppearance="?android:attr/textAppearanceListItem"
+                    android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
 
             <LinearLayout
@@ -232,13 +234,19 @@
                 android:paddingStart="@dimen/updater_preference_row_padding_start"
                 android:paddingEnd="@dimen/updater_preference_row_padding_end">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="@dimen/updater_preference_icon_margin_end"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_maintainer"
-                    app:tint="?attr/colorOnSurface" />
+                <FrameLayout
+                    android:layout_width="@dimen/updater_preference_icon_size"
+                    android:layout_height="@dimen/updater_preference_icon_size"
+                    android:layout_marginEnd="@dimen/updater_preference_icon_margin_end">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_maintainer"
+                        app:tint="?attr/colorOnSurface" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
