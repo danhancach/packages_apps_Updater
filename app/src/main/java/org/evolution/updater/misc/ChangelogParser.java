@@ -71,10 +71,11 @@ public final class ChangelogParser {
                 continue;
             }
 
+            // Chi danh dau dau dong khi file goc co gach dau dong
             if (line.startsWith("- ") || line.startsWith("* ") || line.startsWith("• ")) {
-                items.add(line.substring(2).trim());
+                items.add("• " + line.substring(2).trim());
             } else if (line.startsWith("-") || line.startsWith("*") || line.startsWith("•")) {
-                items.add(line.substring(1).trim());
+                items.add("• " + line.substring(1).trim());
             } else {
                 items.add(line);
             }

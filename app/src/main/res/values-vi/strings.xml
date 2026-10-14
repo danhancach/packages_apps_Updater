@@ -61,8 +61,6 @@
     <string name="support_telegram">Telegram</string>
     <string name="support_github">GitHub</string>
     <string name="brand_evolution_x">Evolution X</string>
-    <string name="changelog_content_title">Nhật ký thay đổi</string>
-    <string name="changelog_rom_section_title">Thông tin bản dựng</string>
     <string name="menu_auto_updates_check">Tự động kiểm tra bản cập nhật</string>
     <string name="menu_auto_updates_check_interval_daily">Mỗi ngày một lần</string>
     <string name="menu_auto_updates_check_interval_weekly">Mỗi tuần một lần</string>

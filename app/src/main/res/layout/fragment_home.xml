@@ -172,43 +172,36 @@
                     android:textAppearance="?attr/textAppearanceTitleSmall"
                     android:textColor="?attr/colorPrimary" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/home_cloud_update_card"
-                    style="@style/Widget.Updater.Card"
+                <!-- Empty: the don; co OTA thi RecyclerView (nhom the Top/Center/Bottom) -->
+                <TextView
+                    android:id="@+id/home_cloud_empty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/updater_preference_card_margin_horizontal"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    app:contentPadding="20dp">
+                    android:layout_marginEnd="@dimen/updater_preference_card_margin_horizontal"
+                    android:alpha="0.6"
+                    android:background="@drawable/updater_preference_bg_single"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/updater_preference_row_min_height"
+                    android:paddingStart="@dimen/updater_preference_row_padding_start"
+                    android:paddingEnd="@dimen/updater_preference_row_padding_end"
+                    android:text="@string/home_no_updates_available"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/home_cloud_empty"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.6"
-                            android:text="@string/home_no_updates_available"
-                            android:textAppearance="?attr/textAppearanceBodyMedium"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recycler_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:nestedScrollingEnabled="false"
-                            android:overScrollMode="never"
-                            android:visibility="gone"
-                            tools:itemCount="1"
-                            tools:listitem="@layout/update_item_embedded"
-                            tools:visibility="visible" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:visibility="gone"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/update_item_cloud"
+                    tools:visibility="visible" />
 
                 <!-- Tieu de section local (khong IconButton) -->
                 <TextView

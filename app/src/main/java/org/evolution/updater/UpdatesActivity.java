@@ -174,8 +174,8 @@ public class UpdatesActivity extends UpdatesListActivity
         if (mIsTV) {
             mAdapter = new UpdatesListAdapter(this);
         } else {
-            // Phone: item phang trong the Home; tach local / online
-            mAdapter = new UpdatesListAdapter(this, R.layout.update_item_embedded);
+            // Phone: dam may = nhom the Expressive; local van nam trong the Top
+            mAdapter = new UpdatesListAdapter(this, R.layout.update_item_cloud, true);
             mLocalAdapter = new UpdatesListAdapter(this, R.layout.update_item_embedded);
         }
 

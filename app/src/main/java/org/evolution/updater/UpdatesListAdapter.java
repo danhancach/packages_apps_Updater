@@ -35,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
@@ -77,6 +78,9 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
     private UpdaterController mUpdaterController;
     private final UpdatesListActivity mActivity;
     private final int mItemLayoutRes;
+    /** Dam may: moi item = the trong nhom Top/Center/Bottom; click ca the. */
+    private final boolean mPreferenceGroupCards;
+    private final int mPreferenceCardGapPx;
 
     private AlertDialog infoDialog;
 
@@ -121,12 +125,21 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
     }
 
     public UpdatesListAdapter(UpdatesListActivity activity) {
-        this(activity, R.layout.update_item_view);
+        this(activity, R.layout.update_item_view, false);
     }
 
     public UpdatesListAdapter(UpdatesListActivity activity, int itemLayoutRes) {
+        this(activity, itemLayoutRes, false);
+    }
+
+    public UpdatesListAdapter(UpdatesListActivity activity, int itemLayoutRes,
+            boolean preferenceGroupCards) {
         mActivity = activity;
         mItemLayoutRes = itemLayoutRes;
+        mPreferenceGroupCards = preferenceGroupCards;
+        mPreferenceCardGapPx = preferenceGroupCards
+                ? activity.getResources().getDimensionPixelSize(R.dimen.updater_preference_card_gap)
+                : 0;
     }
 
     @NonNull
@@ -261,8 +274,14 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
+        if (mPreferenceGroupCards) {
+            applyPreferenceGroupStyle(viewHolder.itemView, i);
+        }
+
         if (mDownloadIds == null) {
             viewHolder.mExpand.setEnabled(false);
+            viewHolder.itemView.setOnClickListener(null);
+            viewHolder.itemView.setClickable(false);
             return;
         }
 
@@ -271,6 +290,8 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
         if (update == null) {
             // Ban cap nhat da bi xoa
             viewHolder.mExpand.setEnabled(false);
+            viewHolder.itemView.setOnClickListener(null);
+            viewHolder.itemView.setClickable(false);
             return;
         }
 
@@ -331,6 +352,10 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
         }
         mDownloadIds.add(0, downloadId);
         notifyItemInserted(0);
+        // Cap nhat bo goc hang ke (Top → Center/Bottom)
+        if (mPreferenceGroupCards && getItemCount() > 1) {
+            notifyItemChanged(1);
+        }
     }
 
     public void notifyItemChanged(String downloadId) {
@@ -354,7 +379,12 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
         }
         mDownloadIds.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
+        // Nhom the: rebind tat ca de doi Top/Center/Bottom
+        if (mPreferenceGroupCards) {
+            notifyItemRangeChanged(0, getItemCount());
+        } else {
+            notifyItemRangeChanged(position, getItemCount());
+        }
     }
 
     public boolean containsDownloadId(String downloadId) {
@@ -507,19 +537,61 @@ public class UpdatesListAdapter extends RecyclerView.Adapter<UpdatesListAdapter.
             Action primaryAction, boolean primaryEnabled, boolean canDelete) {
         viewHolder.mExpand.setEnabled(true);
         viewHolder.mExpand.setAlpha(1.f);
+
+        final View popupAnchor = mPreferenceGroupCards ? viewHolder.itemView : viewHolder.mExpand;
+        final View.OnClickListener actionClick;
         if (primaryAction == Action.REBOOT) {
-            // Cho reboot: chevron mo menu → nut mui ten xoay tron reboot
+            // Cho reboot: chevron → icon reboot
             viewHolder.mExpand.setImageResource(R.drawable.ic_menu_reboot);
             viewHolder.mExpand.setContentDescription(mActivity.getString(R.string.reboot));
-            viewHolder.mExpand.setOnClickListener(
-                    v -> runPrimaryAction(Action.REBOOT, update.getDownloadId()));
+            actionClick = v -> runPrimaryAction(Action.REBOOT, update.getDownloadId());
         } else {
             viewHolder.mExpand.setImageResource(R.drawable.ic_expand_chevron);
             viewHolder.mExpand.setContentDescription(
                     mActivity.getString(R.string.update_expand_options));
-            viewHolder.mExpand.setOnClickListener(
-                    v -> startActionMode(update, primaryAction, primaryEnabled, canDelete,
-                            viewHolder.mExpand));
+            actionClick = v -> startActionMode(update, primaryAction, primaryEnabled, canDelete,
+                    popupAnchor);
+        }
+
+        if (mPreferenceGroupCards) {
+            // Nhom the dam may: bam ca the (mui ten chi la affordance)
+            viewHolder.mExpand.setClickable(false);
+            viewHolder.mExpand.setFocusable(false);
+            viewHolder.mExpand.setOnClickListener(null);
+            viewHolder.itemView.setClickable(true);
+            viewHolder.itemView.setFocusable(true);
+            viewHolder.itemView.setOnClickListener(actionClick);
+        } else {
+            viewHolder.mExpand.setClickable(true);
+            viewHolder.mExpand.setFocusable(true);
+            viewHolder.mExpand.setOnClickListener(actionClick);
+            viewHolder.itemView.setOnClickListener(null);
+        }
+    }
+
+    /** Gan nen Top/Center/Bottom/Single + gap 2dp cho nhom the Expressive. */
+    private void applyPreferenceGroupStyle(View itemView, int position) {
+        int count = getItemCount();
+        @DrawableRes int bgRes;
+        if (count <= 1) {
+            bgRes = R.drawable.updater_preference_bg_single;
+        } else if (position == 0) {
+            bgRes = R.drawable.updater_preference_bg_top;
+        } else if (position == count - 1) {
+            bgRes = R.drawable.updater_preference_bg_bottom;
+        } else {
+            bgRes = R.drawable.updater_preference_bg_center;
+        }
+        itemView.setBackgroundResource(bgRes);
+
+        ViewGroup.LayoutParams lp = itemView.getLayoutParams();
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) lp;
+            int top = position == 0 ? 0 : mPreferenceCardGapPx;
+            if (mlp.topMargin != top) {
+                mlp.topMargin = top;
+                itemView.setLayoutParams(mlp);
+            }
         }
     }
 

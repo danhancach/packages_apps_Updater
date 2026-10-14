@@ -6,7 +6,6 @@
 package org.evolution.updater.ui;
 
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -20,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.evolution.updater.R;
-import org.evolution.updater.misc.BuildInfoUtils;
 import org.evolution.updater.misc.ChangelogFetcher;
 import org.evolution.updater.misc.ChangelogParser;
 import org.evolution.updater.misc.ChangelogSection;
@@ -29,7 +27,7 @@ import org.evolution.updater.misc.Utils;
 import java.util.List;
 
 /**
- * Tab Changelog: 2 the — thong tin ROM + noi dung changelog.
+ * Tab Changelog: noi dung changelog (bullet chi khi file goc co gach dau dong).
  */
 public class ChangelogFragment extends Fragment {
 
@@ -39,7 +37,6 @@ public class ChangelogFragment extends Fragment {
     private View mErrorView;
     private View mEmptyView;
     private View mContentView;
-    private TextView mRomInfoView;
     private TextView mBodyView;
     private boolean mLoaded;
 
@@ -58,10 +55,7 @@ public class ChangelogFragment extends Fragment {
         mErrorView = view.findViewById(R.id.changelog_error);
         mEmptyView = view.findViewById(R.id.changelog_empty);
         mContentView = view.findViewById(R.id.changelog_content);
-        mRomInfoView = view.findViewById(R.id.changelog_rom_info);
         mBodyView = view.findViewById(R.id.changelog_body);
-
-        mRomInfoView.setText(BuildInfoUtils.getRomInfoLine(requireContext()));
 
         view.findViewById(R.id.changelog_retry).setOnClickListener(v -> loadChangelog(true));
     }
@@ -116,7 +110,7 @@ public class ChangelogFragment extends Fragment {
     }
 
     private void bindChangelogBody(List<ChangelogSection> sections) {
-        SpannableStringBuilder builder = new SpannableStringBuilder();
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < sections.size(); i++) {
             ChangelogSection section = sections.get(i);
             if (i > 0) {
@@ -126,12 +120,12 @@ public class ChangelogFragment extends Fragment {
                 builder.append(section.title);
                 if (section.date != null && !section.date.isEmpty()
                         && !section.title.contains(section.date)) {
-                    builder.append("\n").append(section.date);
+                    builder.append('\n').append(section.date);
                 }
-                builder.append("\n");
+                builder.append('\n');
             }
             for (String item : section.items) {
-                builder.append("• ").append(item).append("\n");
+                builder.append(item).append('\n');
             }
         }
         mBodyView.setText(builder.toString().trim());

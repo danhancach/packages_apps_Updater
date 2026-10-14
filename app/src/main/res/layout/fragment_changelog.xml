@@ -65,37 +65,6 @@
                 android:orientation="vertical"
                 android:paddingTop="8dp">
 
-                <!-- The thong tin ROM — giu nhu cu, khong tach tieu de -->
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/Widget.Updater.Card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    app:contentPadding="20dp">
-
-                    <TextView
-                        android:id="@+id/changelog_rom_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="?attr/colorOnSurface"
-                        tools:text="Evolution X  12.2 | A17 | UNOFFICIAL | PDX237" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Chi tach tieu de the Nhat ky thay doi -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="24dp"
-                    android:paddingTop="24dp"
-                    android:paddingEnd="24dp"
-                    android:paddingBottom="4dp"
-                    android:text="@string/changelog_content_title"
-                    android:textAppearance="?attr/textAppearanceTitleSmall"
-                    android:textColor="?attr/colorPrimary" />
-
                 <com.google.android.material.card.MaterialCardView
                     style="@style/Widget.Updater.Card"
                     android:layout_width="match_parent"

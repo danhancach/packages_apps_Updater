@@ -49,10 +49,6 @@
     <!-- Changelog tab -->
     <string name="changelog_empty">No changelog available</string>
     <string name="changelog_retry">Retry</string>
-    <string name="changelog_content_title">Changelog</string>
-    <string name="changelog_rom_section_title">Build info</string>
-    <!-- Evolution X  12.2 | A17 | UNOFFICIAL | PDX237 -->
-    <string name="changelog_rom_info_format" translatable="false">Evolution X  %1$s | %2$s | %3$s | %4$s</string>
 
     <!-- Home tab -->
     <string name="home_status_up_to_date">Up to date</string>
